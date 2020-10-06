@@ -31,9 +31,12 @@ export const useCSS = url => {
   };
 
 const TOKEN_KEY = "vccmoderator";
+const SET_KEY = "atstime"
 
 export const login = (token) => {
-    console.log(token);
+    //console.log(token);
+    var object = new Date().getTime();
+    localStorage.setItem(SET_KEY, object);
     localStorage.setItem(TOKEN_KEY, token);
 }
 
@@ -44,7 +47,18 @@ export const logout = () => {
 
 export const getLogin = () => {
     if (localStorage.getItem(TOKEN_KEY)) {
-        //var t = JSON.stringify(localStorage.getItem(TOKEN_KEY));
+        const itemExpiry = localStorage.getItem(SET_KEY)
+        if (!itemExpiry) {
+          localStorage.removeItem(TOKEN_KEY);
+        }
+        var now = new Date()
+        now.setDate(now.getDate() + 1);
+        if (now.getTime() < itemExpiry) {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.removeItem(SET_KEY);
+          window.location.reload(false);
+          return "";
+        }
         return localStorage.getItem(TOKEN_KEY);
     }
 } 
