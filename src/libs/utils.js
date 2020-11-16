@@ -52,11 +52,14 @@ export const getLogin = () => {
           localStorage.removeItem(TOKEN_KEY);
         }
         var now = new Date()
-        now.setDate(now.getDate() + 1);
-        if (now.getTime() < itemExpiry) {
+        now.setDate(now.getDate());
+       // console.log( parseInt(itemExpiry)+10000 < now.getTime())
+
+        if ( parseInt(itemExpiry)+10000000 <  now.getTime()) {
           localStorage.removeItem(TOKEN_KEY);
-          localStorage.removeItem(SET_KEY);
-          window.location.reload(false);
+          window.open( '/'
+                      ,'_self'
+          );
           return "";
         }
         return localStorage.getItem(TOKEN_KEY);
