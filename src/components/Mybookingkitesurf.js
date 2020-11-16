@@ -11,24 +11,23 @@ import {
   CCardBody,CTextarea
 } from '@coreui/react'
 
-import { getLogin } from '../libs/utils.js';
-
 import Myloading from './Myloading.js'
 //REUSABLE COMPONENT
-class Mynewcourse extends React.Component {
+class Mybookingkitesurf extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data : [],
             showLoading : false,
+            txtbooking : "",
+            txtslottime : ""
         };
         this.myData = this.myData.bind(this);
-        this.myAdd = this.myAdd.bind(this);
         this.myUpdate = this.myUpdate.bind(this);
+        this.myEmail = this.myEmail.bind(this);
         this.handleChange = this.handleChange.bind(this);
       }
-
-      myAdd()
+      myEmail()
       {
         var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
@@ -43,18 +42,21 @@ class Mynewcourse extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("/api/newcourse.php", requestOptions)
+              fetch("/api/email.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
                     {
                       alert(json);
                       this.setState({showLoading: false  });
+                      window.open( '/#/booking/Calendar_booking'
+                          ,'_self'
+                      );
                     }
               )
       }
       myUpdate()
-      { //send email confirmation
+      {
         var myHeaders = new Headers();
             myHeaders.append("Content-Type", "application/json");
 
@@ -68,23 +70,37 @@ class Mynewcourse extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("/api/sendemailcourse.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/updatebooking.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
                     {
                       alert(json);
                       this.setState({showLoading: false  });
+                      window.open( '/#/booking/Calendar_booking'
+                          ,'_self'
+                      );
                     }
               )
       }
       myData()
       {
+        this.setState({showLoading: true  });
+          fetch(this.props.url)
+          .then(response => response.json())
+          .then(
+            json => this.setState({data: json[0]}),
+            this.timeout = setTimeout(() => {
+              this.setState({showLoading: false  });
+            }, 500)
+          )
       }
       componentDidMount() {
-        this.state.data = {"bookingDate":this.props.id,"slotTime":"9:00am-12:00pm","activity":"Promo Try Scuba Diving Tour","numberOfDivers":"1","mobile":"","email":"","name":getLogin(),"status":"NEW","address":"","note":"NO NOTES"};
-      
-        this.forceUpdate();
+        //wait 500 miliseconds
+        setTimeout(() => {
+          this.myData();
+        }, 500);
+        
       }
 
       handleChange(event)
@@ -98,7 +114,8 @@ class Mynewcourse extends React.Component {
       <CCol lg={6}>
         <CCard>
           <CCardHeader>
-            New Course Booking by  <span className="badge badge-warning">{getLogin()}</span>
+            Booking ID: {this.state.data["id"]} <br/>
+            Created By: {this.state.data["createdby"]}
           </CCardHeader>
           <CCardBody>
             <CFormGroup>
@@ -118,22 +135,11 @@ class Mynewcourse extends React.Component {
               <CLabel>ACTIVITY <span className="badge badge-danger">{this.state.data["activity"]}</span></CLabel>
                 <CSelect custom defaultValue={this.state.data["activity"]} name="activity" onChange={this.handleChange}>
                     <option value="">--Please Select--</option>
-                    <option value="Promo Try Scuba Diving Tour">Promo Try Scuba Diving Tour - AED 299.00</option>
-                    <option value="Luxury Try Scuba Diving Tour">Luxury Try Scuba Diving Tour - AED 450.00</option>
-                    <option value="VIP Try Scuba Diving Tour">VIP Try Scuba Diving Tour - AED 550.00</option>
-                    <option value="Dive Trip">Dive Trip - AED 700.00</option>
-                    <option value="Open Water Course">Open Water Course - AED 1500.00</option>
-                    <option value="Advance Open Water Course">Advance Open Water Course - AED 1300.00</option>
-                    <option value="Rescue Diver Course">Rescue Diver Course - AED 1800.00</option>
-                    <option value="Dive Master Course">Dive Master Course - AED 4500.00</option>
-                    <option value="FREEDIVING">FREEDIVING - AED 2500.00</option>
-                    <option value="Refresher Course">Refresher Course - AED 450.00</option>
-                    <option value="Pool DSD">Pool DSD - AED 99.00</option>
+                    <option value="Promo Try Kitesurf Tour">Promo Try Kitesurf Tour</option>
                     <option value="Specialty Course">Specialty Course</option>
                     <option value="Equipment Rental">Equipment Rental</option>
                     <option value="Pool Rental">Pool Rental</option>
                     <option value="Classroom Rental">Classroom Rental</option>
-                    <option value="Beach Diving Rental">Beach Diving Rental</option>
                     <option value="Tourism">Tourism</option>
                     <option value="Groupon">Groupon</option>
                 </CSelect>
@@ -181,10 +187,10 @@ class Mynewcourse extends React.Component {
             </CFormGroup>
             <CRow className="align-items-center">
                 <CCol col="6" xl className="mb-3 mb-xl-0">
-                  <CButton block color="success" onClick={this.myAdd}> Add Course Booking </CButton>
+                  <CButton block color="success" onClick={this.myUpdate}> Update </CButton>
                 </CCol>
                 <CCol col="6" xl className="mb-3 mb-xl-0">
-                  <CButton block color="info" onClick={this.myData}>Add and Email Confirmation</CButton>
+                  <CButton block color="info" onClick={this.myEmail}>Email Confirmation</CButton>
                 </CCol>
             </CRow>
           </CCardBody>
@@ -197,4 +203,4 @@ class Mynewcourse extends React.Component {
   }
 
 
-  export default Mynewcourse
+  export default Mybookingkitesurf

@@ -8,25 +8,111 @@ import {
   CInput,
   CCard,CSelect,
   CCardHeader,CButton,
-  CCardBody,CTextarea
+  CCardBody,CTextarea,CInputFile,CImg
 } from '@coreui/react'
 
 import Myloading from './Myloading.js'
+import { getLogin } from '../libs/utils.js';
 //REUSABLE COMPONENT
 class Mycustomer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             data : [],
+            datatrans : [],
             showLoading : false,
             txtbooking : "",
-            txtslottime : ""
+            txtslottime : "",
+            file : '',
         };
         this.myData = this.myData.bind(this);
         this.myUpdate = this.myUpdate.bind(this);
         this.handleChange = this.handleChange.bind(this);
-      }
+        this.handleChangeTrans = this.handleChangeTrans.bind(this);
+        this.myUpdateTrans = this.myUpdateTrans.bind(this);
 
+        this.handleChangeProfile = this.handleChangeProfile.bind(this);
+        this.uploadprofilepic = this.uploadprofilepic.bind(this);
+      }
+      handleChangeProfile(selectorFiles)
+      {
+          this.setState({ file: selectorFiles });
+          this.uploadprofilepic();
+      }
+      uploadprofilepic()
+      {
+          this.setState({showLoading: true  });
+          if (this.state.file.length > 0)
+          {
+          this.setState({showLoading: true  })
+          console.log("sending Data...another")
+          var formdata = new FormData();
+          formdata.append("files", this.state.file[0], this.state.file[0].name);
+
+          var requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+          };
+
+          fetch("/api/uploadprofile.php?id="+ this.state.data["id"], requestOptions)
+            .then(response => response.text())
+            .then(result => {
+                  console.log(result);
+                  this.setState({showLoading: false  });
+                  this.timeout = setTimeout(() => {
+                    this.setState({showLoading: false  });
+                    let outputresult = JSON.parse(result);
+                    if (outputresult["output"])
+                    {
+                      var resout = "<br/><br/>";
+                      outputresult["output"].forEach(function(newItem) {
+                          resout = resout + JSON.stringify(newItem.email) + "<br/>";
+                      }, this);   
+                      this.setState({modal: true, msg : "File Uploaded: Issues:" + resout})
+                    }
+                    else
+                    {
+                      this.setState({modal: true, msg : "File Uploaded:<strong>" + outputresult["filename"] + "</strong>"})
+                      window.location.reload(false);
+                    }
+                  }, 1000)
+              }
+            )
+            .catch(error => console.log('error', error));
+          }
+          else
+          {
+            this.setState({modal: true, msg : "No File Selected"});
+            this.setState({showLoading: false  });
+          }
+      }
+      myUpdateTrans()
+      {
+        var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify(this.state.datatrans);
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            this.setState({showLoading: true  });
+              fetch("/api/newtrans.php?id="+ this.state.data["id"], requestOptions)
+              .then(response => response.text())
+              .then(
+                    json => 
+                    {
+                      alert(json);
+                      this.setState({showLoading: false  });
+                      window.location.reload(false);
+                    }
+              )
+      }
       myUpdate()
       {
         var myHeaders = new Headers();
@@ -42,7 +128,7 @@ class Mycustomer extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/updateuser.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/updateuser.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
@@ -70,23 +156,28 @@ class Mycustomer extends React.Component {
           this.myData();
         }, 500);
         
+        this.state.datatrans = {"memid":this.props.id,"creator":getLogin(),"point":"0","action":"NOTHING"};
+        this.forceUpdate();
       }
 
       handleChange(event)
       {
         this.state.data[event.target.name] = event.target.value;
       }
+      handleChangeTrans(event)
+      {
+        this.state.datatrans[event.target.name] = event.target.value;
+      }
       render() {
         return <>
          <Myloading show={this.state.showLoading}/>
          <CRow>
-      <CCol lg={6}>
+      <CCol lg={4}>
         <CCard>
-          <CCardHeader>
-            Customer ID: {this.state.data["id"]}
-          </CCardHeader>
           <CCardBody>
-
+          <CFormGroup>
+              <CLabel>Customer ID: {this.state.data["id"]}</CLabel>
+          </CFormGroup>
           <CFormGroup>
                     <CLabel>Agency <span className="badge badge-danger">{this.state.data["agency"]}</span></CLabel>
                     <CSelect custom defaultValue={this.state.data["agency"]} name="agency" onChange={this.handleChange}>
@@ -114,14 +205,27 @@ class Mycustomer extends React.Component {
             <CFormGroup>
               <CLabel>Consumable Points :: <h2 className="label label-warning">{this.state.data["cash"]} pts</h2></CLabel>
             </CFormGroup>
+            <CFormGroup>
+              <CLabel>Member Card :: <h2 className="label label-info">{this.state.data["memnum"]}</h2></CLabel>
+            </CFormGroup>
             </CCardBody>
         </CCard>
      </CCol>
-     <CCol lg={6}>
+     <CCol lg={4}>
         <CCard>
           <CCardHeader>Customer Details
           </CCardHeader>
           <CCardBody>
+          <CFormGroup>
+            <CLabel>Profile Picture</CLabel>
+            <CInputFile
+                          id="file-multiple-input" 
+                          name="file-multiple-input" 
+                          multiple
+                          onChange={ (e) => this.handleChangeProfile(e.target.files) }
+                          />
+             <CButton block color="warning" onClick={this.uploadprofilepic}> UPLOAD </CButton>
+          </CFormGroup>
           <CFormGroup>
               <CLabel>Name :: {this.state.data["name"]}</CLabel>
               <CInput type="text" placeholder="" defaultValue={this.state.data["fname"]}   name="fname" onChange={this.handleChange}/>
@@ -142,6 +246,32 @@ class Mycustomer extends React.Component {
             <CRow className="align-items-center">
                 <CCol col="6" xl className="mb-3 mb-xl-0">
                   <CButton block color="success" onClick={this.myUpdate}> Update </CButton>
+                </CCol>
+            </CRow>
+          </CCardBody>
+        </CCard>
+      </CCol>
+      <CCol lg={4}>
+        <CCard>
+          <CCardBody>
+            <CImg src={`/api/profileimage.php?id=${this.state.data["id"]}`} className="inbox_people"/>
+          </CCardBody>
+        </CCard>
+        <CCard>
+          <CCardHeader>Transactions
+          </CCardHeader>
+          <CCardBody>
+          <CFormGroup>
+              <CLabel>Transaction :: {this.state.data["action"]}</CLabel>
+              <CInput type="text" placeholder="" name="action" onChange={this.handleChangeTrans}/>
+            </CFormGroup>
+            <CFormGroup>
+              <CLabel>Points</CLabel>
+              <CInput type="number" placeholder="" name="point" onChange={this.handleChangeTrans}/>
+            </CFormGroup>
+            <CRow className="align-items-center">
+                <CCol col="6" xl className="mb-3 mb-xl-0">
+                  <CButton block color="success" onClick={this.myUpdateTrans}> New Transaction </CButton>
                 </CCol>
             </CRow>
           </CCardBody>

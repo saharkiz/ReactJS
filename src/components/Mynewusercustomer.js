@@ -13,7 +13,7 @@ import {
 
 import Myloading from './Myloading.js'
 //REUSABLE COMPONENT
-class Mynewcustomer extends React.Component {
+class Mynewusercustomer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -42,13 +42,16 @@ class Mynewcustomer extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("/api/newuser.php", requestOptions)
+              fetch("/api/newmember.php", requestOptions)
               .then(response => response.text())
               .then(
                     json => 
                     {
-                      alert(json);
                       this.setState({showLoading: false  });
+                      window.open( "/#/customer/view_customer/" + json
+                          ,'_self'
+                      );
+                      
                     }
               )
       }
@@ -56,7 +59,7 @@ class Mynewcustomer extends React.Component {
       {
       }
       componentDidMount() {
-          this.setState({data : {"role":"ADMIN","fname":"","lname":"","email":"","dob":"","mobile":"","agency":"","level":"","memsince":"","divenum":"","note":"","cash":0}})
+          this.setState({data : {"role":"USER","fname":"","lname":"","email":"","dob":"","mobile":"","agency":"","level":"","memsince":"","divenum":"","note":"NEW CUSTOMER","cash":0}})
           this.forceUpdate();
         }
 
@@ -71,7 +74,7 @@ class Mynewcustomer extends React.Component {
       <CCol lg={6}>
         <CCard>
           <CCardHeader>
-
+              Bermuda Diving Center Member
           </CCardHeader>
           <CCardBody>
 
@@ -110,7 +113,7 @@ class Mynewcustomer extends React.Component {
      </CCol>
      <CCol lg={6}>
         <CCard>
-          <CCardHeader>Admin Details
+          <CCardHeader>Customer Details
           </CCardHeader>
           <CCardBody>
           <CFormGroup>
@@ -132,7 +135,7 @@ class Mynewcustomer extends React.Component {
             </CFormGroup>
             <CRow className="align-items-center">
                 <CCol col="6" xl className="mb-3 mb-xl-0">
-                  <CButton block color="success" onClick={this.myUpdate}> Add New Admin </CButton>
+                  <CButton block color="success" onClick={this.myUpdate}> Add New Member & Edit </CButton>
                 </CCol>
             </CRow>
           </CCardBody>
@@ -145,4 +148,4 @@ class Mynewcustomer extends React.Component {
   }
 
 
-  export default Mynewcustomer
+  export default Mynewusercustomer

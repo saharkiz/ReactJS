@@ -43,7 +43,7 @@ class Mynewbooking extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/newbooking.php", requestOptions)
+              fetch("/api/newbooking.php", requestOptions)
               .then(response => response.text())
               .then(
                     json => 
@@ -68,7 +68,7 @@ class Mynewbooking extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/sendemail.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/sendemail.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
@@ -80,9 +80,33 @@ class Mynewbooking extends React.Component {
       }
       myData()
       {
+        var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
+
+            var raw = JSON.stringify(this.state.data);
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            this.setState({showLoading: true  });
+              fetch("/api/emailbooking.php", requestOptions)
+              .then(response => response.text())
+              .then(
+                    json => 
+                    {
+                      alert(json);
+                      this.setState({showLoading: false  });
+                    }
+              )
       }
       componentDidMount() {
-        this.state.data = {"bookingDate":this.props.id,"slotTime":"9:00am-12:00pm","activity":"Promo Try Scuba Diving Tour","numberOfDivers":"1","mobile":"","email":"","name":getLogin(),"status":"NEW","address":"","note":"NO NOTES"};
+        this.state.data = {"createdby":getLogin(),"bookingDate":this.props.id,"slotTime":"9:00am-12:00pm","activity":"Promo Try Scuba Diving Tour","numberOfDivers":"1","mobile":"","email":"","name":getLogin(),"status":"NEW","address":"","note":"NO NOTES"};
+      
+        this.forceUpdate();
       }
 
       handleChange(event)

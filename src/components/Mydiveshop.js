@@ -42,7 +42,7 @@ class Mydiveshop extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/updatediveshop.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/updatediveshop.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
@@ -83,7 +83,8 @@ class Mydiveshop extends React.Component {
       <CCol lg={6}>
         <CCard>
           <CCardHeader>
-            Shop Rental/Maintenance: {this.state.data["id"]}
+            Shop Rental/Maintenance: {this.state.data["id"]}<br/>
+            Created By: {this.state.data["createdby"]}
           </CCardHeader>
           <CCardBody>
           <CFormGroup>

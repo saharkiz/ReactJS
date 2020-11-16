@@ -42,13 +42,16 @@ class Mybookingbooking extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/email.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/email.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
                     {
                       alert(json);
                       this.setState({showLoading: false  });
+                      window.open( '/#/booking/Calendar_booking'
+                          ,'_self'
+                      );
                     }
               )
       }
@@ -67,13 +70,16 @@ class Mybookingbooking extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/updatebooking.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/updatebooking.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 
                     {
                       alert(json);
                       this.setState({showLoading: false  });
+                      window.open( '/#/booking/Calendar_booking'
+                          ,'_self'
+                      );
                     }
               )
       }
@@ -108,7 +114,8 @@ class Mybookingbooking extends React.Component {
       <CCol lg={6}>
         <CCard>
           <CCardHeader>
-            Booking ID: {this.state.data["id"]}
+            Booking ID: {this.state.data["id"]} <br/>
+            Created By: {this.state.data["createdby"]}
           </CCardHeader>
           <CCardBody>
             <CFormGroup>

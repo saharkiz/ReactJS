@@ -35,7 +35,7 @@ class Mydivedashboard extends React.Component {
       myData()
       {
         this.setState({showLoading: true  });
-          fetch("https://admin.scubadiving.ae/api/dashboard.php")
+          fetch("/api/dashboard.php")
           .then(response => response.json())
           .then(
             json => 

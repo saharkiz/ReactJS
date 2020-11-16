@@ -42,7 +42,7 @@ class Mycoursebooking extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/updatecourse.php?id="+ this.state.data["id"], requestOptions)
+              fetch("/api/updatecourse.php?id="+ this.state.data["id"], requestOptions)
               .then(response => response.text())
               .then(
                     json => 

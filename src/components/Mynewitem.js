@@ -25,8 +25,33 @@ class Mynewitem extends React.Component {
         this.myData = this.myData.bind(this);
         this.myAdd = this.myAdd.bind(this);
         this.handleChange = this.handleChange.bind(this);
+        this.myEmail = this.myEmail.bind(this);
       }
+      myEmail()
+      {
+        var myHeaders = new Headers();
+            myHeaders.append("Content-Type", "application/json");
 
+            var raw = JSON.stringify(this.state.data);
+
+            var requestOptions = {
+              method: 'POST',
+              headers: myHeaders,
+              body: raw,
+              redirect: 'follow'
+            };
+
+            this.setState({showLoading: true  });
+              fetch("/api/emailitem.php", requestOptions)
+              .then(response => response.text())
+              .then(
+                    json => 
+                    {
+                      alert(json);
+                      this.setState({showLoading: false  });
+                    }
+              )
+      }
       myAdd()
       {
         var myHeaders = new Headers();
@@ -42,7 +67,7 @@ class Mynewitem extends React.Component {
             };
 
             this.setState({showLoading: true  });
-              fetch("https://admin.scubadiving.ae/api/newitem.php", requestOptions)
+              fetch("/api/newitem.php", requestOptions)
               .then(response => response.text())
               .then(
                     json => 
@@ -57,7 +82,9 @@ class Mynewitem extends React.Component {
       }
       componentDidMount() {
         var todayDate = new Date().toISOString().slice(0,10);
-        this.state.data = {"name":getLogin(),"mobile":"","type":"RENTAL","items":"","status":"NEW","createdon":todayDate,"pickupdate":"","numdays":"","returndate":"","note":"","email":"","idno":""};
+        this.state.data = {"createdby":getLogin(),"name":getLogin(),"mobile":"","type":"RENTAL","items":"","status":"NEW","createdon":todayDate,"pickupdate":"","numdays":"","returndate":"","note":"","email":"","idno":""};
+      
+        this.forceUpdate();
       }
 
       handleChange(event)
@@ -142,6 +169,9 @@ class Mynewitem extends React.Component {
             <CRow className="align-items-center">
                 <CCol col="6" xl className="mb-3 mb-xl-0">
                   <CButton block color="success" onClick={this.myAdd}> Add New Rental/Maintenance </CButton>
+                </CCol>
+                <CCol col="6" xl className="mb-3 mb-xl-0">
+                  <CButton block color="info" onClick={this.myEmail}>Add and Email Confirmation</CButton>
                 </CCol>
             </CRow>
           </CCardBody>
