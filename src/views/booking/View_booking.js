@@ -8,7 +8,10 @@ import {
   CButton,
   CCollapse
 } from '@coreui/react'
-import Mybookingbooking from '../../components/Mybookingbooking.js'
+
+
+import { getLogin } from '../../libs/utils.js';
+import Mybookingbooking from '../../components/Mybookingkitesurf.js'
 import { useHistory } from 'react-router-dom'
 const View_booking = ({match}) => {
   const myref = useRef(null);
@@ -19,9 +22,23 @@ const View_booking = ({match}) => {
     e.preventDefault()
     window.location.reload(false);
   }
+  const btnwhatsapp = (e) => {
+    e.preventDefault()
+    window.open( '/api/getBookingWhatsapp.php?id=' + match.params.id
+                ,'_blank'
+    );
+  }
 
+  const btndel = (e) => {
+    window.open( '/api/delBooking.php?mdid=' + match.params.id + '&usr=' + getLogin()
+        ,'_blank'
+    );
+  }
   const btnkick = (e) => {
     e.preventDefault()
+    window.open( '/#/dashboard'
+        ,'_self'
+    );
     
   }
 
@@ -29,7 +46,7 @@ const View_booking = ({match}) => {
   document.title="View User Booking";
   return (
     <>
-    <Mybookingbooking url={`https://admin.scubadiving.ae/api/getbooking.php?id=${match.params.id}`} />
+    <Mybookingbooking url={`/api/getbooking.php?id=${match.params.id}`} />
     <CRow>
     <CCol lg={12}>
       <CCard>
@@ -38,13 +55,13 @@ const View_booking = ({match}) => {
             <h4>{msg}</h4><br/></CRow>
           <CRow className="align-items-center">
             <CCol col="6" sm="4" md="4" xl className="mb-3 mb-xl-0">
-              <CButton block color="success" onClick={btnkick}>Whatsapp</CButton>
+              <CButton block color="success" onClick={btnwhatsapp}>Whatsapp</CButton>
             </CCol>
             <CCol col="6" sm="4" md="4" xl className="mb-3 mb-xl-0">
               <CButton block color="info" onClick={btnrefresh}>Refresh</CButton>
             </CCol>
             <CCol col="6" sm="4" md="4" xl className="mb-3 mb-xl-0">
-              <CButton block color="danger" onClick={btnkick}>Delete</CButton>
+              <CButton block color="danger" onClick={() => {if(window.confirm('Are you sure Delete the item?')){btndel()};}}>Delete</CButton>
             </CCol>
             <CCol col="6" sm="4" md="4" xl className="mb-3 mb-xl-0">
               <CButton block color="warning" onClick={btnkick}>Close</CButton>

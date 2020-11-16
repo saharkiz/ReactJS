@@ -8,7 +8,7 @@ import {
   CButton,
   CCollapse
 } from '@coreui/react'
-import Mynewbooking from '../../components/Mynewbooking.js'
+import Mynewbooking from '../../components/Mynewkitesurf.js'
 import { useHistory } from 'react-router-dom'
 const New_booking = ({match}) => {
   const myref = useRef(null);

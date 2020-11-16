@@ -23,7 +23,7 @@ const List_booking = () => {
           </CCardHeader>
           <CCardBody>
               <Mytable fields={fields} 
-                  url="https://admin.scubadiving.ae/api/bookinglist.php" 
+                  url="/api/bookinglist.php" 
                   detail="booking/view_booking"  history ={history}
                   />
           </CCardBody>

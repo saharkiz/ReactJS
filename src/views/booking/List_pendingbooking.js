@@ -7,10 +7,10 @@ import {
   CCol,
   CRow
 } from '@coreui/react'
-import Mytable from '../../components/Mytable.js'
+import Mytablexrow from '../../components/Mytablexrow.js'
 
 const List_pendingbooking = () => {
-  const fields = ['mdate','name','activity'];
+  const fields = ['mdate','name','activity','note'];
   const history = useHistory()
   document.title="Pending Booking List";
   return (
@@ -19,11 +19,11 @@ const List_pendingbooking = () => {
       <CCol>
         <CCard>
           <CCardHeader>
-            Booking List
+            Pending Booking List
           </CCardHeader>
           <CCardBody>
-              <Mytable fields={fields} 
-                  url="https://admin.scubadiving.ae/api/pendingbookinglist.php" 
+              <Mytablexrow fields={fields} 
+                  url="/api/pendingbookinglist.php" 
                   detail="booking/view_booking"  history ={history}
                   />
           </CCardBody>
